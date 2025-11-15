@@ -114,7 +114,7 @@ function normalizeDate(dateStr: string): string {
   if (Number.isNaN(date.getTime())) {
     throw new Error('Invalid date format');
   }
-  return date.toISOString().split('T')[0];
+  return date?.toISOString().split('T')[0];
 }
 
 /**
@@ -150,7 +150,9 @@ function normalizeTime(timeStr: string): string {
 eventSchema.pre<EventDocument>('save', function preSave(next) {
   try {
     // Validate required string fields are non-empty after trimming.
-    const requiredFields: Array<keyof EventAttributes> = [
+    const requiredFields: Array<
+      'title' | 'description' | 'overview' | 'price' | 'image' | 'venue' | 'date' | 'time' | 'organizer' | 'coordinator'
+    > = [
       'title',
       'description',
       'overview',
@@ -164,7 +166,7 @@ eventSchema.pre<EventDocument>('save', function preSave(next) {
     ];
 
     for (const field of requiredFields) {
-      const value = this[field];
+      const value = this[field] as unknown;
       if (typeof value !== 'string' || value.trim().length === 0) {
         throw new Error(`Field "${field}" is required`);
       }
@@ -172,12 +174,12 @@ eventSchema.pre<EventDocument>('save', function preSave(next) {
 
     // Generate slug only when title is new or has been modified.
     if (this.isNew || this.isModified('title')) {
-      this.slug = generateSlug(this.title);
+      this.slug = generateSlug(this.title!);
     }
 
     // Normalize date and time to consistent formats.
-    this.date = normalizeDate(this.date);
-    this.time = normalizeTime(this.time);
+    this.date = normalizeDate(this.date!);
+    this.time = normalizeTime(this.time!);
 
     next();
   } catch (error) {
