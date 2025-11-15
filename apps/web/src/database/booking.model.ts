@@ -42,6 +42,10 @@ const bookingSchema = new Schema<BookingDocument, BookingModel>(
 // Index on eventId to speed up lookups for bookings by event.
 bookingSchema.index({ eventId: 1 });
 
+bookingSchema.index({ eventId: 1, email: 1 }, { unique: true, name: 'uniq_event_email' });
+
+bookingSchema.index({ eventId: 1, createdAt: -1 });
+
 /**
  * Pre-save hook to ensure:
  * - the referenced event exists
