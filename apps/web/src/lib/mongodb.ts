@@ -14,8 +14,7 @@ interface MongooseCache {
  * `mongoose` property on `globalThis`.
  */
 declare global {
-  // eslint-disable-next-line no-var
-  var mongoose: MongooseCache | undefined;
+  var mongooseCache: MongooseCache | undefined;
 }
 
 /**
@@ -24,13 +23,16 @@ declare global {
  * In production, this should always be defined. In development, we explicitly
  * throw if it's missing so misconfiguration fails fast.
  */
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error(
-    'Invalid configuration: MONGODB_URI environment variable is not set.'
-  );
-}
+const MONGODB_URI = (() => {
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  const value = process.env.MONGODB_URI;
+  if (!value) {
+    throw new Error(
+      'Invalid configuration: MONGODB_URI environment variable is not set.'
+    );
+  }
+  return value;
+})();
 
 /**
  * Use a global cache in development to avoid creating multiple connections
@@ -39,16 +41,16 @@ if (!MONGODB_URI) {
  * the logic simple and consistent.
  */
 const globalWithMongoose = globalThis as typeof globalThis & {
-  mongoose?: MongooseCache;
+  mongooseCache?: MongooseCache;
 };
 
-const cached: MongooseCache = globalWithMongoose.mongoose ?? {
+const cached: MongooseCache = globalWithMongoose.mongooseCache ?? {
   conn: null,
   promise: null,
 };
 
-if (!globalWithMongoose.mongoose) {
-  globalWithMongoose.mongoose = cached;
+if (!globalWithMongoose.mongooseCache) {
+  globalWithMongoose.mongooseCache = cached;
 }
 
 /**

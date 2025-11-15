@@ -8,9 +8,9 @@ export interface BookingAttributes {
   updatedAt?: Date;
 }
 
-export interface BookingDocument extends BookingAttributes, Document {}
+export type BookingDocument = BookingAttributes & Document;
 
-export interface BookingModel extends Model<BookingDocument> {}
+export type BookingModel = Model<BookingDocument>;
 
 const bookingSchema = new Schema<BookingDocument, BookingModel>(
   {

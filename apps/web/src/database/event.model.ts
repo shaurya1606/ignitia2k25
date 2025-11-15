@@ -21,9 +21,9 @@ export interface EventAttributes {
   updatedAt?: Date;
 }
 
-export interface EventDocument extends EventAttributes, Document {}
+export type EventDocument = EventAttributes & Document;
 
-export interface EventModel extends Model<EventDocument> {}
+export type EventModel = Model<EventDocument>;
 
 /**
  * Helper to ensure non-empty trimmed strings.
@@ -114,7 +114,11 @@ function normalizeDate(dateStr: string): string {
   if (Number.isNaN(date.getTime())) {
     throw new Error('Invalid date format');
   }
-  return date?.toISOString().split('T')[0];
+  const [isoDate] = date.toISOString().split('T');
+  if (!isoDate) {
+    throw new Error('Invalid date format');
+  }
+  return isoDate;
 }
 
 /**
