@@ -6,9 +6,13 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=web",
+    "build:web": "turbo run build --filter=web",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "lint:web": "turbo run lint --filter=web",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,md}\" \"packages/**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "check-types:web": "turbo run check-types --filter=web",
+    "ci": "turbo run lint check-types build --parallel"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
