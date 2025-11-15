@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react/prop-types */
 
 import { useRef, useEffect, useState } from "react";
 import { Renderer, Program, Triangle, Mesh } from "ogl";
@@ -30,9 +31,30 @@ interface LightRaysProps {
   className?: string;
 }
 
+type UniformVec2 = [number, number];
+type UniformVec3 = [number, number, number];
+
+interface LightRaysUniforms {
+  iTime: { value: number };
+  iResolution: { value: UniformVec2 };
+  rayPos: { value: UniformVec2 };
+  rayDir: { value: UniformVec2 };
+  raysColor: { value: UniformVec3 };
+  raysSpeed: { value: number };
+  lightSpread: { value: number };
+  rayLength: { value: number };
+  pulsating: { value: number };
+  fadeDistance: { value: number };
+  saturation: { value: number };
+  mousePos: { value: UniformVec2 };
+  mouseInfluence: { value: number };
+  noiseAmount: { value: number };
+  distortion: { value: number };
+}
+
 const DEFAULT_COLOR = "#ffffff";
 
-const hexToRgb = (hex: string): [number, number, number] => {
+const hexToRgb = (hex: string): UniformVec3 => {
   const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!match) {
     return [1, 1, 1];
@@ -50,7 +72,7 @@ const getAnchorAndDir = (
   origin: RaysOrigin,
   w: number,
   h: number
-): { anchor: [number, number]; dir: [number, number] } => {
+): { anchor: UniformVec2; dir: UniformVec2 } => {
   const outside = 0.2;
   switch (origin) {
     case "top-left":
@@ -90,12 +112,12 @@ const LightRays: React.FC<LightRaysProps> = ({
   className = "",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const uniformsRef = useRef<any>(null);
+  const uniformsRef = useRef<LightRaysUniforms | null>(null);
   const rendererRef = useRef<Renderer | null>(null);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
   const smoothMouseRef = useRef({ x: 0.5, y: 0.5 });
   const animationIdRef = useRef<number | null>(null);
-  const meshRef = useRef<any>(null);
+  const meshRef = useRef<Mesh | null>(null);
   const cleanupFunctionRef = useRef<(() => void) | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -256,10 +278,10 @@ void main() {
 
       const uniforms = {
         iTime: { value: 0 },
-        iResolution: { value: [1, 1] },
+        iResolution: { value: [1, 1] as UniformVec2 },
 
-        rayPos: { value: [0, 0] },
-        rayDir: { value: [0, 1] },
+        rayPos: { value: [0, 0] as UniformVec2 },
+        rayDir: { value: [0, 1] as UniformVec2 },
 
         raysColor: { value: hexToRgb(raysColor) },
         raysSpeed: { value: raysSpeed },
@@ -268,11 +290,11 @@ void main() {
         pulsating: { value: pulsating ? 1.0 : 0.0 },
         fadeDistance: { value: fadeDistance },
         saturation: { value: saturation },
-        mousePos: { value: [0.5, 0.5] },
+        mousePos: { value: [0.5, 0.5] as UniformVec2 },
         mouseInfluence: { value: mouseInfluence },
         noiseAmount: { value: noiseAmount },
         distortion: { value: distortion },
-      };
+      } satisfies LightRaysUniforms;
       uniformsRef.current = uniforms;
 
       const geometry = new Triangle(gl);
