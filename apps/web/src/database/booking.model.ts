@@ -18,7 +18,6 @@ const bookingSchema = new Schema<BookingDocument, BookingModel>(
       type: Schema.Types.ObjectId,
       ref: 'Event',
       required: true,
-      index: true,
     },
     email: {
       type: String,

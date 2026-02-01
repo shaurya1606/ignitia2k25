@@ -1,23 +1,30 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "next.config.*", "postcss.config.*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["MONGODB_URI", "NEXT_PUBLIC_BASE_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"]
+      "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
+      "outputs": [".eslintcache"]
     },
     "check-types": {
       "dependsOn": ["^check-types"],
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"],
+      "outputs": ["**/*.tsbuildinfo"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["MONGODB_URI", "NEXT_PUBLIC_BASE_URL"]
     }
   }
 }

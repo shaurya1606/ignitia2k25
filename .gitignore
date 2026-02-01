@@ -33,6 +33,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Tooling caches
+.eslintcache
+*.tsbuildinfo
+
 # Misc
 .DS_Store
 *.pem

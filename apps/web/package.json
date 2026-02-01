@@ -7,7 +7,7 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --max-warnings 0",
+    "lint": "eslint --max-warnings 0 --cache --cache-location .eslintcache",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@repo/ui": "workspace:*",
     "@tabler/icons-react": "^3.35.0",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
     "gsap": "^3.13.0",
     "lucide-react": "^0.553.0",
